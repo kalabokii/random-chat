@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node server/dist/app.js",
-    "build:all": "cd client && npm run build && cd ../server && npm run build",
-    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+    "build": "cd client && npm run build && cd ../server && npm run build",
+    "install": "npm install && cd client && npm install && cd ../server && npm install"
   },
   "dependencies": {},
   "devDependencies": {}
