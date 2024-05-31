@@ -26,10 +26,10 @@ export default function useMiddleMan(socket: Socket) {
     ] as Video[],
   });
 
-  function socketEmit(event: string, data: any) {
+  function socketEmit(event: string, payload: any) {
     socket.emit("music", {
       event,
-      ...data,
+      payload,
     });
   }
 
@@ -51,6 +51,7 @@ export default function useMiddleMan(socket: Socket) {
     } else {
       iframe.play();
     }
+    state.playState = "playing";
   });
 
   socket.on("pause", () => {
@@ -60,11 +61,12 @@ export default function useMiddleMan(socket: Socket) {
 
   socket.on("seekTo", (time: number) => {
     iframe.seekTo(time);
+    state.currentTime = time;
   });
 
   function play(videoId?: string) {
     iframe.play(videoId);
-    socketEmit("play", { videoId });
+    socketEmit("play", videoId);
     state.playState = "playing";
   }
 
@@ -76,7 +78,8 @@ export default function useMiddleMan(socket: Socket) {
 
   function seekTo(time: number) {
     iframe.seekTo(time);
-    socketEmit("seekTo", { time });
+    state.currentTime = time;
+    socketEmit("seekTo", time);
     if (state.playState === "paused") iframe.pause();
   }
 
