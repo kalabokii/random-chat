@@ -9,7 +9,7 @@ import SideAnimation from "../components/extra/SideAnimation.vue";
 import Music from "@/components/music/Music.vue";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3001/");
+const socket = io("/");
 
 const text = ref("");
 const messageBox = ref<HTMLElement | null>(null);
