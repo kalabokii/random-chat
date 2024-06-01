@@ -4,6 +4,8 @@ import socket from "./socket";
 import configDotenv from "dotenv";
 import cors from "cors";
 import * as path from "node:path";
+import videoInfo from "./http/music/video-info";
+
 configDotenv.config();
 
 const app = express();
@@ -15,16 +17,16 @@ socket(server);
 
 const port = process.env.PORT || 3001;
 
-app.use(express.static(path.join(__dirname, '../../client/dist')));
-console.log(path.join(__dirname, '../../client/dist'));
+app.use(express.static(path.join(__dirname, "../../client/dist")));
+console.log(path.join(__dirname, "../../client/dist"));
 
-
+app.get("/api/video-info", videoInfo);
 app.get("/api", function (req, res) {
   res.status(200).json({ message: "Hello from the API!" });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
 });
 
 server.listen(port, () => {
