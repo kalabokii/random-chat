@@ -9,34 +9,5 @@
     <input id="input" autocomplete="off" /><button>Send</button>
 </form>
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    const socket = io();
-
-    document.getElementById('form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.getElementById('input');
-        const message = input.value;
-        socket.emit('chat message', message);
-        input.value = '';
-        return false;
-    });
-
-    socket.on('new chat', () => {
-        console.log('connected');
-    });
-
-    socket.on('disconnected', () => {
-        socket.emit('disconnected');
-    });
-
-    socket.on('chat message', (msg) => {
-        const messages = document.getElementById('messages');
-        console.log('messages', msg);
-        const li = document.createElement('li');
-        li.textContent = msg;
-        messages.appendChild(li);
-    });
-</script>
 </body>
 </html>

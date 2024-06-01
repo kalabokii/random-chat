@@ -1,8 +1,8 @@
-import type { Sender, MessageData } from "../../packages/message/model/message";
+import type { MessageData, Sender } from "../../packages/message/model/message";
 import { ref } from "vue";
-import io from "socket.io-client";
+import { Socket } from "socket.io-client";
 
-export default function () {
+export default function (socket: Socket) {
   const messages = ref<MessageData[]>([]);
   const me = ref<Sender>();
   const friend = ref<Sender>();
@@ -13,7 +13,6 @@ export default function () {
   const muted = ref(false);
 
   const audioMessage = new Audio("audio.mp3");
-  const socket = io("/");
   // const socket = io("http://localhost:3001");
   socket.on("welcome", (user: Sender) => {
     me.value = user;

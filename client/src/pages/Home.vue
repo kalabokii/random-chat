@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import EmojiPicker from "../../lib/components/emoji/EmojiPicker.vue";
 import TextArea from "../../lib/components/text-area/TextArea.vue";
 import { Icon } from "@iconify/vue";
@@ -6,6 +6,10 @@ import { ref, watchEffect } from "vue";
 import Message from "../components/chat/Message.vue";
 import useChat from "../composables/chat/use-chat";
 import SideAnimation from "../components/extra/SideAnimation.vue";
+import Music from "@/components/music/Music.vue";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:3001/");
 
 const text = ref("");
 const messageBox = ref<HTMLElement | null>(null);
@@ -22,7 +26,7 @@ const {
   userCount,
   disconnect,
   readMessage,
-} = useChat();
+} = useChat(socket);
 
 function handleMessageSubmit() {
   if (!text.value) {
@@ -62,8 +66,8 @@ watchEffect(() => {
           >
             <div class="relative w-8 h-8 object-cover rounded-full shrink-0">
               <div
-                class="w-3 h-3 absolute bottom-0 left-0 rounded-full"
                 :class="status === 'connected' ? 'bg-green-500' : 'bg-red-500'"
+                class="w-3 h-3 absolute bottom-0 left-0 rounded-full"
               ></div>
               <img
                 :src="friend.image"
@@ -75,18 +79,18 @@ watchEffect(() => {
               {{ friend.name }}
             </div>
             <Icon
-              @click="toggleMute"
               :icon="
                 muted
                   ? 'teenyicons:sound-off-solid'
                   : 'teenyicons:sound-on-solid'
               "
               class="w-6 h-6 text-blue-400 cursor-pointer shrink-0"
+              @click="toggleMute"
             />
             <div v-if="status === 'connected'" class="pl-5 shrink-0">
               <button
-                @click="disconnect"
                 class="text-gray-200 bg-orange-400 p-1 rounded-md"
+                @click="disconnect"
               >
                 გათიშვა
               </button>
@@ -100,9 +104,10 @@ watchEffect(() => {
             </h5>
           </div>
         </div>
-        <div class="shrink-0">
+        <div class="shrink-0 flex items-center">
+          <Music :socket="socket"></Music>
           <p class="whitespace-nowrap flex items-center">
-            <span class="hidden sm:block px-2"> აქტიური მომხმარებელი:</span>
+            <span class="hidden sm:block px-2"> ონლაინ:</span>
             <span
               class="sm:hidden block w-3 h-3 rounded-full bg-green-500 mx-1"
             ></span>
@@ -111,8 +116,8 @@ watchEffect(() => {
         </div>
       </div>
       <div
-        class="bg-gray-900 h-full overflow-auto flex flex-col relative"
         ref="messageBox"
+        class="bg-gray-900 h-full overflow-auto flex flex-col relative"
       >
         <div class="sticky top-0 w-full">
           <div
@@ -120,7 +125,7 @@ watchEffect(() => {
             class="text-center bg-red-500 px-5 py-2"
           >
             <span class="pr-3 text-white font-medium text-lg">მარტო დარჩი</span>
-            <button @click="findFriend" class="bg-green-400 p-1 rounded-md">
+            <button class="bg-green-400 p-1 rounded-md" @click="findFriend">
               მოძებნე პარტნიორი
             </button>
           </div>
@@ -135,9 +140,9 @@ watchEffect(() => {
         <div class="w-full px-5">
           <Message
             v-for="message of messages"
-            :message="message"
             :key="message.id"
             :is-mine="message.sender.id == me?.id"
+            :message="message"
           />
         </div>
       </div>
@@ -146,11 +151,11 @@ watchEffect(() => {
       >
         <div class="w-full py-2 h-full flex items-center">
           <TextArea
-            @focus="readMessage"
-            :disabled="status !== 'connected'"
-            @submit="handleMessageSubmit"
             v-model="text"
+            :disabled="status !== 'connected'"
             placeholder="მესიჯი..."
+            @focus="readMessage"
+            @submit="handleMessageSubmit"
           ></TextArea>
         </div>
         <div
@@ -160,9 +165,9 @@ watchEffect(() => {
         </div>
         <div class="pl-2 h-[3.5rem] flex items-center">
           <Icon
-            @click="handleMessageSubmit"
             class="h-6 w-6 text-blue-400 cursor-pointer"
             icon="fluent:send-16-filled"
+            @click="handleMessageSubmit"
           />
         </div>
       </div>

@@ -139,5 +139,10 @@ export default (
       if (!friend) return;
       io.to(friend?.id).emit("delivered", msg_id);
     });
+
+    socket.on("music", (videoId: string) => {
+      if (!friend) return;
+      io.to(friend?.id).emit("music", videoId);
+    });
   });
 };
