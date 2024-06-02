@@ -71,12 +71,16 @@ function handleSliderClick(event: MouseEvent) {
 
 watchEffect(() => {
   if (props.type === "time") {
+    const totalSeconds = Math.floor(props.total % 60);
+    const currentSeconds = Math.floor(props.current % 60);
     stamps.value.current =
-      Math.floor((props.total * progress.value) / 100 / 60) +
+      Math.floor(props.current / 60) +
       ":" +
-      (((props.total * progress.value) / 100) % 60).toFixed(0);
+      (currentSeconds < 10 ? "0" + currentSeconds : currentSeconds);
     stamps.value.total =
-      Math.floor(props.total / 60) + ":" + (props.total % 60).toFixed(0);
+      Math.floor(props.total / 60) +
+      ":" +
+      (totalSeconds < 10 ? "0" + totalSeconds : totalSeconds);
   } else {
     stamps.value.current = props.current.toString();
     stamps.value.total = props.total.toString();
