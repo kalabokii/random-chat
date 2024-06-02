@@ -6,7 +6,7 @@ import { ref, watchEffect } from "vue";
 import Message from "../components/chat/Message.vue";
 import useChat from "../composables/chat/use-chat";
 import SideAnimation from "../components/extra/SideAnimation.vue";
-import Music from "@/components/music/Music.vue";
+import Music from "../components/music/Music.vue";
 import io from "socket.io-client";
 
 const socket = io("/");
