@@ -36,6 +36,16 @@ function handleSubmit() {
   addToQueue(videoUrl.value);
   videoUrl.value = "";
 }
+
+async function addAndPlay() {
+  if (!videoUrl.value) {
+    return;
+  }
+  const music = await addToQueue(videoUrl.value);
+  videoUrl.value = "";
+  if (!music) return;
+  play(music.id);
+}
 </script>
 
 <template>
@@ -94,12 +104,18 @@ function handleSubmit() {
             placeholder="YouTube video URL"
             type="text"
           />
-          <div class="flex justify-center">
+          <div class="flex justify-center gap-2">
             <button
               class="w-full bg-blue-400 mt-2 mx-auto shadow px-3 py-1 rounded"
-              type="submit"
+              @click="addAndPlay"
             >
               play
+            </button>
+            <button
+              class="flex w-full text-center bg-green-600 mt-2 mx-auto shadow px-3 items-center py-1 rounded"
+              type="submit"
+            >
+              queue
             </button>
           </div>
         </form>
