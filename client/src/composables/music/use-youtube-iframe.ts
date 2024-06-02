@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import { Socket } from "socket.io-client";
 
 interface QueueItem {
   id: string;
@@ -7,7 +8,7 @@ interface QueueItem {
   thumbnail: string;
 }
 
-function youtubeIframe() {
+export default function youtubeIframe(socket: Socket) {
   const player = ref<YT.Player | null>(null);
   const queue = ref<QueueItem[]>([
     {
@@ -43,7 +44,7 @@ function youtubeIframe() {
 
   function onPlayerStateChange(event: any) {
     if (event.data === window.YT.PlayerState.ENDED) {
-      console.log("Music ended");
+      playNext();
     }
   }
 
@@ -71,7 +72,7 @@ function youtubeIframe() {
     };
   }
 
-  async function addToQueue(url: string) {
+  async function addToQueue(url: string, notify = true) {
     const videoId = getVideoId(url);
     if (!videoId) {
       console.error("Invalid video URL");
@@ -95,10 +96,11 @@ function youtubeIframe() {
 
     const queueItem = parseQueueItem(videoData);
     queue.value.push(queueItem);
+    notify && socket.emit("addToQueue", queueItem);
     return queueItem;
   }
 
-  function play(videoId?: string) {
+  function play(videoId?: string, notify = true) {
     if (!player.value) return;
     if (videoId) {
       player.value.loadVideoById(videoId);
@@ -112,36 +114,70 @@ function youtubeIframe() {
       if (!player.value) return;
       currentTime.value = player.value.getCurrentTime();
     }, 1000);
+    notify && socket.emit("play", videoId);
   }
 
-  function pause() {
+  function pause(notify = true) {
     if (!player.value) return;
     player.value.pauseVideo();
     playState.value = "paused";
     if (counterInterval) clearInterval(counterInterval);
+    notify && socket.emit("pause");
   }
 
-  function playNext() {
+  function playNext(notify = true) {
     const currentVideoIndex = queue.value.findIndex(
       (item) => item.id === currentVideo.value?.id,
     );
     if (currentVideoIndex === -1 || currentVideoIndex + 1 >= queue.value.length)
       return;
     play(queue.value[currentVideoIndex + 1].id);
+    notify && socket.emit("playNext");
   }
 
-  function playPrevious() {
+  function playPrevious(notify = true) {
     const currentVideoIndex = queue.value.findIndex(
       (item) => item.id === currentVideo.value?.id,
     );
     if (currentVideoIndex === -1 || currentVideoIndex - 1 < 0) return;
     play(queue.value[currentVideoIndex - 1].id);
+
+    notify && socket.emit("playPrevious");
   }
 
-  function jumpTo(time: number) {
+  function jumpTo(time: number, notify = true) {
     if (!player.value) return;
     player.value.seekTo(time, true);
+    currentTime.value = time;
+    notify && socket.emit("jumpTo", time);
+    if (playState.value === "paused" || playState.value === "stopped") {
+      player.value.pauseVideo();
+    }
   }
+
+  socket.on("play", (videoId: string) => {
+    play(videoId, false);
+  });
+
+  socket.on("pause", () => {
+    pause(false);
+  });
+
+  socket.on("playNext", () => {
+    playNext(false);
+  });
+
+  socket.on("playPrevious", () => {
+    playPrevious(false);
+  });
+
+  socket.on("jumpTo", (time: number) => {
+    jumpTo(time, false);
+  });
+
+  socket.on("addToQueue", (queueItem: QueueItem) => {
+    queue.value.push(queueItem);
+  });
 
   return {
     addToQueue,
@@ -156,5 +192,3 @@ function youtubeIframe() {
     jumpTo,
   };
 }
-
-export const player = youtubeIframe();

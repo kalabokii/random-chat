@@ -144,5 +144,35 @@ export default (
       if (!friend) return;
       io.to(friend?.id).emit("music", videoId);
     });
+
+    socket.on("play", (videoId: string) => {
+      if (!friend) return;
+      io.to(friend?.id).emit("play", videoId);
+    });
+
+    socket.on("pause", () => {
+      if (!friend) return;
+      io.to(friend?.id).emit("pause");
+    });
+
+    socket.on("playNext", () => {
+      if (!friend) return;
+      io.to(friend?.id).emit("playNext");
+    });
+
+    socket.on("playPrevious", () => {
+      if (!friend) return;
+      io.to(friend?.id).emit("playPrevious");
+    });
+
+    socket.on("jumpTo", (time: number) => {
+      if (!friend) return;
+      io.to(friend?.id).emit("jumpTo", time);
+    });
+
+    socket.on("addToQueue", (video: any) => {
+      if (!friend) return;
+      io.to(friend?.id).emit("addToQueue", video);
+    });
   });
 };

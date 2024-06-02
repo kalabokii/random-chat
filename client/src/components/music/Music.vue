@@ -2,8 +2,17 @@
 import { PropType, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { Socket } from "socket.io-client";
-import { player } from "../../composables/music/use-youtube-iframe.ts";
+import player from "../../composables/music/use-youtube-iframe.ts";
 import Slider from "../slider/Slider.vue";
+
+const videoUrl = ref("");
+
+const props = defineProps({
+  socket: {
+    type: Object as PropType<Socket>,
+    required: true,
+  },
+});
 
 const {
   addToQueue,
@@ -16,16 +25,7 @@ const {
   currentVideo,
   currentTime,
   jumpTo,
-} = player;
-
-const videoUrl = ref("");
-
-const props = defineProps({
-  socket: {
-    type: Object as PropType<Socket>,
-    required: true,
-  },
-});
+} = player(props.socket);
 
 const showControls = ref(false);
 
