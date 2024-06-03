@@ -65,6 +65,7 @@ export default function useMiddleMan(socket: Socket) {
   });
 
   function play(videoId?: string) {
+    if (videoId) state.currentVideo = videoId;
     iframe.play(videoId);
     socketEmit("play", videoId);
     state.playState = "playing";
@@ -86,7 +87,7 @@ export default function useMiddleMan(socket: Socket) {
   async function addToQueue(videoUrl: string) {
     const videoId = new URL(videoUrl).searchParams.get("v");
     // TODO: Add error handling
-    await fetch(`/api/video-info?videoId=${videoId}`)
+    await fetch(`http://localhost:3001/api/video-info?videoId=${videoId}`)
       .then((res) => res.json())
       .then((data) => state.queue.push(data))
       .catch(console.error);
