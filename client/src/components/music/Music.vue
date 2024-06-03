@@ -2,7 +2,7 @@
 import { computed, PropType, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { Socket } from "socket.io-client";
-import Slider from "../slider/Slider.vue";
+import Slider from "@lib/components/slider/Slider.vue";
 import useMiddleMan, { type Video } from "./hooks/use-middle-man.ts";
 import { formatTime } from "@lib/utils/functions.ts";
 

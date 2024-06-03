@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { PropType, ref, watchEffect } from "vue";
+import { formatTime } from "@lib/utils/functions.ts";
 
 const props = defineProps({
   current: {
@@ -71,16 +72,8 @@ function handleSliderClick(event: MouseEvent) {
 
 watchEffect(() => {
   if (props.type === "time") {
-    const totalSeconds = Math.floor(props.total % 60);
-    const currentSeconds = Math.floor(props.current % 60);
-    stamps.value.current =
-      Math.floor(props.current / 60) +
-      ":" +
-      (currentSeconds < 10 ? "0" + currentSeconds : currentSeconds);
-    stamps.value.total =
-      Math.floor(props.total / 60) +
-      ":" +
-      (totalSeconds < 10 ? "0" + totalSeconds : totalSeconds);
+    stamps.value.current = formatTime(props.current);
+    stamps.value.total = formatTime(props.total);
   } else {
     stamps.value.current = props.current.toString();
     stamps.value.total = props.total.toString();
