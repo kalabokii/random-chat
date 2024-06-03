@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { PropType, ref } from "vue";
+import { computed, PropType, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { Socket } from "socket.io-client";
-import player from "../../composables/music/use-youtube-iframe.ts";
 import Slider from "../slider/Slider.vue";
+import useMiddleMan, { type Video } from "./hooks/use-middle-man.ts";
 
 const videoUrl = ref("");
 
@@ -15,19 +15,23 @@ const props = defineProps({
 });
 
 const {
-  addToQueue,
   play,
   pause,
+  seekTo,
+  addToQueue,
   playNext,
   playPrevious,
-  // queue,
   playState,
-  currentVideo,
   currentTime,
-  jumpTo,
-} = player(props.socket);
+  currentVideo,
+  queue,
+} = useMiddleMan(props.socket);
 
 const showControls = ref(false);
+
+const nowPlaying = computed(() => {
+  return queue.value.find((music: Video) => music.id === currentVideo.value);
+});
 
 function handleSubmit() {
   if (!videoUrl.value) {
@@ -35,16 +39,6 @@ function handleSubmit() {
   }
   addToQueue(videoUrl.value);
   videoUrl.value = "";
-}
-
-async function addAndPlay() {
-  if (!videoUrl.value) {
-    return;
-  }
-  const music = await addToQueue(videoUrl.value);
-  videoUrl.value = "";
-  if (!music) return;
-  play(music.id);
 }
 </script>
 
@@ -64,7 +58,7 @@ async function addAndPlay() {
         <p
           class="my-2 overflow-clip line-clamp-1 text-center text-sm font-medium text-blue-50"
         >
-          {{ currentVideo.title }}
+          {{ nowPlaying?.title }}
         </p>
         <div class="flex justify-between items-center">
           <Icon
@@ -92,9 +86,9 @@ async function addAndPlay() {
         </div>
         <Slider
           :current="currentTime"
-          :total="currentVideo.duration || 0"
+          :total="nowPlaying?.duration || 0"
           type="time"
-          @update:value="jumpTo"
+          @update:value="seekTo"
         ></Slider>
 
         <form class="mt-2" @submit.prevent="handleSubmit">
@@ -107,7 +101,6 @@ async function addAndPlay() {
           <div class="flex justify-center gap-2">
             <button
               class="w-full bg-blue-400 mt-2 mx-auto shadow px-3 py-1 rounded"
-              @click="addAndPlay"
             >
               play
             </button>
