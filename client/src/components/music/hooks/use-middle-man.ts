@@ -83,11 +83,13 @@ export default function useMiddleMan(socket: Socket) {
     if (state.playState === "paused") iframe.pause();
   }
 
-  function addToQueue(videoId: string) {
-    // TODO: Fetch video data from YouTube API
-    // state.queue.push();
-    // socket.emit("addToQueue", video);
-    console.log("Adding to queue", videoId);
+  async function addToQueue(videoUrl: string) {
+    const videoId = new URL(videoUrl).searchParams.get("v");
+    // TODO: Add error handling
+    await fetch(`/api/video-info?videoId=${videoId}`)
+      .then((res) => res.json())
+      .then((data) => state.queue.push(data))
+      .catch(console.error);
   }
 
   function playNext() {
