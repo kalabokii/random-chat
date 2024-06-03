@@ -1,4 +1,5 @@
 import { Server, Socket } from "socket.io";
+import handleMusicEmits from "./music";
 import http from "http";
 
 interface User {
@@ -140,39 +141,9 @@ export default (
       io.to(friend?.id).emit("delivered", msg_id);
     });
 
-    socket.on("music", (videoId: string) => {
-      if (!friend) return;
-      io.to(friend?.id).emit("music", videoId);
-    });
-
-    socket.on("play", (videoId: string) => {
-      if (!friend) return;
-      io.to(friend?.id).emit("play", videoId);
-    });
-
-    socket.on("pause", () => {
-      if (!friend) return;
-      io.to(friend?.id).emit("pause");
-    });
-
-    socket.on("playNext", () => {
-      if (!friend) return;
-      io.to(friend?.id).emit("playNext");
-    });
-
-    socket.on("playPrevious", () => {
-      if (!friend) return;
-      io.to(friend?.id).emit("playPrevious");
-    });
-
-    socket.on("jumpTo", (time: number) => {
-      if (!friend) return;
-      io.to(friend?.id).emit("jumpTo", time);
-    });
-
-    socket.on("addToQueue", (video: any) => {
-      if (!friend) return;
-      io.to(friend?.id).emit("addToQueue", video);
-    });
+    socket.on(
+      "music",
+      (data) => friend && handleMusicEmits(socket, data, friend.id),
+    );
   });
 };
