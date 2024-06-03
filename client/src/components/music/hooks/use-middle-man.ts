@@ -99,6 +99,7 @@ export default function useMiddleMan(socket: Socket) {
     if (currentVideoIndex === -1 || currentVideoIndex + 1 >= state.queue.length)
       return;
     play(state.queue[currentVideoIndex + 1].id);
+    state.currentVideo = state.queue[currentVideoIndex + 1].id;
   }
 
   function playPrevious() {
@@ -107,6 +108,7 @@ export default function useMiddleMan(socket: Socket) {
     );
     if (currentVideoIndex === -1 || currentVideoIndex - 1 < 0) return;
     play(state.queue[currentVideoIndex - 1].id);
+    state.currentVideo = state.queue[currentVideoIndex - 1].id;
   }
 
   return {
