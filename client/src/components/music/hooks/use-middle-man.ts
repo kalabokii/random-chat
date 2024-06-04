@@ -38,7 +38,7 @@ export default function useMiddleMan(socket: Socket) {
       case "timeTrack":
         state.currentTime = data;
         break;
-      case "video-ended":
+      case "videoEnded":
         playNext();
         break;
     }
