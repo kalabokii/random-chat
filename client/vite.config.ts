@@ -2,11 +2,15 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import Icons from "unplugin-icons/vite";
 import { fileURLToPath, URL } from "node:url";
+import Pages from "vite-plugin-pages";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    Pages({
+      dirs: "src/pages", // Specify the directory for your pages
+    }),
     Icons({
       compiler: "vue3",
     }),
