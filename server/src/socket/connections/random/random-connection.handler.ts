@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
-import { RandomState } from "./random.state";
 import eventRedirect from "../utils/emit.redirect";
+import { RandomState } from "./random.state";
 
 export default function (socket: Socket, state: RandomState) {
   const user = {

@@ -1,14 +1,11 @@
 import { User } from "../types/user.model";
 
-// ? This file is responsible for the state of the random chat
-// ? It will keep track of all users and their status
-
 interface UserCollection {
   [id: string]: User;
 }
 
 export interface RandomState {
-  users: UserCollection;
+  getUser: (id: string) => User;
   addUser: (user: User) => void;
   removeUser: (id: string) => void;
   findFriend: (id: string) => string | undefined;
@@ -39,8 +36,12 @@ function state(): RandomState {
     }
   }
 
+  function getUser(id: string) {
+    return users[id];
+  }
+
   return {
-    users: { ...users },
+    getUser,
     addUser,
     removeUser,
     findFriend,
