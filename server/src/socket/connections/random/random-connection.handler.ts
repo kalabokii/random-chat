@@ -12,11 +12,11 @@ export default function (socket: Socket, state: RandomState) {
   let friendId: string | undefined;
 
   state.addUser(user);
-
   socket.on("find friend", () => {
     friendId = state.findFriend(user.id);
     if (!friendId) return;
-    socket.to(friendId).emit("friend found", user.id);
+    socket.to(friendId).emit("friend found", user);
+    console.log("friend found", friendId);
     socket.emit("friend found", state.getUser(friendId));
   });
 
