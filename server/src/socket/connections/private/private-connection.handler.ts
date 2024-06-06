@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
-import privateState, { PrivateState } from "./private.state";
+import { PrivateState } from "./private.state";
 import emitRedirect from "../utils/emit.redirect";
 
-export default function (socket: Socket, state: PrivateState) {
+export default function (socket: Socket, privateState: PrivateState) {
   const user = {
     name: "name_placeholder",
     image: "image_placeholder",

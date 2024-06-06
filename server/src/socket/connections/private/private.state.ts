@@ -10,7 +10,7 @@ export interface PrivateState {
   removeUser: (id: string) => void;
 }
 
-function state(): PrivateState {
+export default function state(): PrivateState {
   const users: UserCollection = {};
 
   function addUser(user: User) {
@@ -37,5 +37,3 @@ function state(): PrivateState {
     removeUser,
   };
 }
-
-export default state();
