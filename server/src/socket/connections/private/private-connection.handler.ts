@@ -16,11 +16,11 @@ export default function (socket: Socket, privateState: PrivateState) {
 
   socket.on("chat", (data) => {
     const friends = privateState.getFriends(user.id);
-    emitRedirect(socket, data, "chat", Object.keys(friends));
+    emitRedirect(socket, data, "chat", Object.keys(friends), user.id);
   });
 
   socket.on("music", (data) => {
     const friends = privateState.getFriends(user.id);
-    emitRedirect(socket, data, "music", Object.keys(friends));
+    emitRedirect(socket, data, "music", Object.keys(friends), user.id);
   });
 }
