@@ -9,6 +9,8 @@ export default function (socket: Socket, state: RandomState) {
     id: socket.id,
   };
 
+  socket.emit("welcome", user);
+
   let friendId: string | undefined;
 
   state.addUser(user);
@@ -16,10 +18,13 @@ export default function (socket: Socket, state: RandomState) {
     friendId = state.findFriend(user.id);
     if (!friendId) return;
     socket.to(friendId).emit("friend found", user);
-    console.log("friend found", friendId);
     socket.emit("friend found", state.getUser(friendId));
   });
 
+  socket.on("end chat", () => {
+    socket.emit("friend lost");
+    friendId = undefined;
+  });
   socket.on("disconnect", () => {
     state.removeUser(user.id);
     if (friendId) {
@@ -28,9 +33,9 @@ export default function (socket: Socket, state: RandomState) {
   });
 
   socket.on("chat", (data) => {
-    eventRedirect(socket, data, "chat", friendId!);
+    eventRedirect(socket, data, "chat", friendId!, user.id);
   });
   socket.on("music", (data) => {
-    eventRedirect(socket, data, "music", friendId!);
+    eventRedirect(socket, data, "music", friendId!, user.id);
   });
 }

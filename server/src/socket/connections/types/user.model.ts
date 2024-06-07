@@ -7,5 +7,11 @@ export interface User {
 }
 
 export interface SocketEventHandler {
-  (socket: Socket, data: any, event: string, friend: string | string[]): void;
+  (
+    socket: Socket,
+    data: any,
+    event: string,
+    friend: string | string[],
+    sender: string,
+  ): void;
 }
