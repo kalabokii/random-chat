@@ -9,6 +9,7 @@ export interface RandomState {
   addUser: (user: User) => void;
   removeUser: (id: string) => void;
   findFriend: (id: string) => string | undefined;
+  getUserCount: () => number;
 }
 
 function state(): RandomState {
@@ -40,11 +41,16 @@ function state(): RandomState {
     return users[id];
   }
 
+  function getUserCount() {
+    return Object.keys(users).length;
+  }
+
   return {
     getUser,
     addUser,
     removeUser,
     findFriend,
+    getUserCount,
   };
 }
 

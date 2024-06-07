@@ -20,6 +20,7 @@ export default (
   io.on("connection", (socket) => {
     if (!socket.handshake.query.chatId) {
       randomConnectionHandler(socket, randomState);
+      io.emit("user count", randomState.getUserCount());
     } else {
       privateConnectionHandler(
         socket,
