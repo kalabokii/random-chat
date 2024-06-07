@@ -6,7 +6,7 @@ export type Sender = {
 
 export type MessageData = {
   id: string;
-  sender: Sender;
+  sender?: string;
   content: string;
   createdAt: string;
   state: "sent" | "received";
